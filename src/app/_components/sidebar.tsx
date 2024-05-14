@@ -1,63 +1,68 @@
+"use client";
 import {
-    Box,
-    Divider,
-    Drawer,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Toolbar,
-  } from "@mui/material";
-  import InboxIcon from "@mui/icons-material/MoveToInbox";
-  import MailIcon from "@mui/icons-material/Mail";
-  import React from "react";
-  
-  const drawerWidth = 240;
-  
-  const SideBar = () => {
-    return (
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {["All mail", "Trash", "Spam"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-    );
+  Box,
+  Drawer,
+  Link,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  Toolbar,
+} from "@mui/material";
+import BeachAccessIcon from "@mui/icons-material/BeachAccess";
+import CoffeeIcon from "@mui/icons-material/Coffee";
+import React from "react";
+import { usePathname } from "next/navigation";
+
+type MenuItem = {
+  name: string;
+  url: string;
+  icon: React.ReactNode;
+};
+const menuList: MenuItem[] = [
+  { name: "ページ１", url: "/page1", icon: <BeachAccessIcon /> },
+  { name: "ページ２", url: "/page2", icon: <CoffeeIcon /> },
+];
+
+const drawerWidth = 240;
+
+const SideBar = () => {
+  const pathname = usePathname();
+  const isSelected = (url: string) => {
+    if (pathname === url || pathname.startsWith(url + "/")) {
+      return true;
+    }
+    return false;
   };
-  
-  export default SideBar;
+  return (
+    <Drawer
+      variant="permanent"
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        [`& .MuiDrawer-paper`]: {
+          width: drawerWidth,
+          boxSizing: "border-box",
+        },
+      }}
+    >
+      <Toolbar />
+      <Box sx={{ overflow: "auto" }}>
+        <List>
+          {menuList.map(({ name, url, icon }: MenuItem) => (
+            <ListItem key={name} disablePadding>
+              <ListItemButton selected={isSelected(url)}>
+                <ListItemIcon>{icon}</ListItemIcon>
+                <Link href={url} underline="none" color="inherit">
+                  {name}
+                </Link>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Drawer>
+  );
+};
+
+export default SideBar;
